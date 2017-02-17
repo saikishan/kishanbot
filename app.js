@@ -23,14 +23,8 @@ bot.dialog('/',[
         session.beginDialog('\ensure profile',session.userData.profile);
     },
     function(session,results){
-<<<<<<< HEAD
-            session.userData.profile= results.response;
-            session.send("hiii %(name)s u r ID is %(ID)s\n ur age is %(age)d\n",session.userData.profile);
-=======
         session.userData.profile= results.response;
-        session.send("hiii %(name)s u r ID is %(ID)s\n ur age is %(age)d\n",session.userData.profile);
->>>>>>> 63dee9aaec15354656c45ab535cba3b00da8775b
-    }
+        session.send("hiii %(name)s u r ID is %(ID)s\n ur age is %(age)d\n",session.userData.profile);    }
 ]);
 bot.dialog('\ensure profile',[function(session,args,next){
     session.dialogData.profile =args || {};
@@ -42,11 +36,7 @@ bot.dialog('\ensure profile',[function(session,args,next){
     else next();
 },function(session,results,next){
     if(results.response)    session.dialogData.profile.ID = results.response;
-<<<<<<< HEAD
     if(!session.dialogData.profile.age) builder.Prompts.number(session,"enter the age");
-=======
-    if(!session.dialogData.profile.age) builder.Prompts.number(session,"enter the age")
->>>>>>> 63dee9aaec15354656c45ab535cba3b00da8775b
     else next()
 },function(session,results){
     if(results.response)   session.dialogData.profile.age = results.response;
