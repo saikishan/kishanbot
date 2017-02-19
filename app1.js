@@ -10,42 +10,20 @@ server.listen(process.env.port||process.env.PORT||3978,function(){
 });
 //create chat bot
 var connector = new builder.ChatConnector({
-    appId: '351e1a98-1bd6-4865-8d64-61ab3902e4b9',
-    appPassword: 'yPBwj4iMyj8fbRYRyqCjmAU'
+    appId: process.env.MICROSOFT_APP_ID,
+    appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
 var bot = new builder.UniversalBot(connector);
 server.post('api/messages',connector.listen());
-var model = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/2520ea80-4d88-4a6e-98e3-1905ebeb7731?subscription-key=aeca06be462d48eea65217dc45bf6595&verbose=true';
-var recognizer = new builder.LuisRecognizer(model);
-var intents = new builder.IntentDialog({ recognizers: [recognizer] });
-bot.dialog('/', intents);
 //=============================================================Working on intents==========================================================//
-intents.matches('say_who',[
-    function(session,args,next){
-        var personco = builder.EntityRecognizer.findEntity(args.entities.person,'coordinator');
-        var personhod = builder.EntityRecognizer.findEntity(args.entities,'hod');
-        var personprincipal = builder.EntityRecognizer.findEntity(args.entities,'principal');
-        var personvp = builder.EntityRecognizer.findEntity(args.entities,'viceprincipal');
-        console.log(personco);
-        if(personco)    session.beginDialog('/coordinator',session,args);
-        else if(personhod)  session.beginDialog('/hod',session);
-        else if(personprincipal) session.beginDialog('/principal',session);
-        else if(personvp) session.beginDialog('/personvp')
-        else session.send("person not availible");
+var intents = new builder.IntentDialog();
+bot.dialog('/',intents);
+intents.matches(/^change name/i,[
+    function(session){
+        session.beginDialog('/profile');
 },
     function(session,results){
         session.send("the username is changed to %s",session.userData.name);
-    }
-]);
-bot.dialog('/coordinator',[
-    function(session,args){
-        var cse = builder.EntityRecognizer.findEntity(args.entities,'department','cse');
-        var ece = builder.EntityRecognizer.findEntity(args.entities,'ece');
-        var mech = builder.EntityRecognizer.findEntity(args.entities,'mech');
-        var civil = builder.EntityRecognizer.findEntity(args.entities,'civil');
-        var it = builder.EntityRecognizer.findEntity(args.entities,'it');
-        var eee = builder.EntityRecognizer.findEntity(args.entities,'eee');
-        if(cse) session.endDialog("k sumanth");
     }
 ]);
 intents.matches(/^i love you/i,[
@@ -80,6 +58,27 @@ intents.matches(/^where is valiant/i,[
 intents.matches(/^who is the coordinator/i,[
     function(session){
         session.beginDialog('/coordinator',session);
+    }
+]);
+bot.dialog('/coordinator',[
+    function(session){
+        builder.Prompts.text(session,"please specify the department ?");
+    },
+    function(session,results){
+        switch(results.response){
+            case 'cse':
+            case 'CSE': session.send("K sUMANth");  break;
+            case 'ECE':
+            case 'ece': session.send("MR ece"); break;
+            case 'eee':
+            case 'EEE': session.send("MR EEE"); break;
+            case 'CIVIL':
+            case 'civil': session.send("MR civil");  break;
+            case 'mech':
+            case 'MECH': session.send("MR MECH");   break;
+            default : session.send("their is no such method try agin!!");
+        }
+        session.endDialog();
     }
 ]);
 intents.onDefault([
