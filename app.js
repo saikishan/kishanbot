@@ -22,48 +22,52 @@ bot.dialog('/', intents);
 //=============================================================Working on intents==========================================================//
 intents.matches('say_who',[
     function(session,args,next){
-        var personco = builder.EntityRecognizer.findEntity(args.entities.person,'coordinator');
-        var personhod = builder.EntityRecognizer.findEntity(args.entities,'hod');
-        var personprincipal = builder.EntityRecognizer.findEntity(args.entities,'principal');
-        var personvp = builder.EntityRecognizer.findEntity(args.entities,'viceprincipal');
+        var personco = builder.EntityRecognizer.findEntity(args.entities ,'person::coordinator');
+        var personhod = builder.EntityRecognizer.findEntity(args.entities,'person::hod');
+        var personp = builder.EntityRecognizer.findEntity(args.entities,'person::principal');
+        var personvp = builder.EntityRecognizer.findEntity(args.entities,'person::viceprincipal');
+        var persond = builder.EntityRecognizer.findEntity(args.entities,'person::viceprincipal');
         console.log(personco);
-        if(personco)    session.beginDialog('/coordinator',session,args);
-        else if(personhod)  session.beginDialog('/hod',session);
-        else if(personprincipal) session.beginDialog('/principal',session);
-        else if(personvp) session.beginDialog('/personvp')
+        if(personco){
+            if(builder.EntityRecognizer.findEntity(args.entities ,'department::cse'))   session.send("k sumanth");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::eee'))   session.send("coor eee");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::ece'))   session.send("	coor ece");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::civil'))   session.send("coor civil");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::mech'))   session.send("coor mech");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::it'))   session.send("COOR it");
+            else session.send("please specify ask with a department");
+        }
+        else if(personhod){
+            if(builder.EntityRecognizer.findEntity(args.entities ,'department::cse'))   session.send("Dr.SUMIT GUPTA, Ph.D");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::eee'))   session.send("Dr.R.V.D.RAMA RAO");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::ece'))   session.send("Prof. K. SRINIVAS");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::civil'))   session.send("Dr.G.REDDY BABU");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::mech'))   session.send("Dr. MANGAM VENU");
+            else if(builder.EntityRecognizer.findEntity(args.entities ,'department::it'))   session.send("Dr.D.J.NAGENDRA KUMAR");
+            else session.send("please specify ask with a department");
+        }
+        else if(personp){
+            session.beginDialog('/principalpicture');
+        } 
+        else if(personvp) session.send("Prof. K. SRINIVAS");
         else session.send("person not availible");
-},
-    function(session,results){
-        session.send("the username is changed to %s",session.userData.name);
-    }
-]);
-bot.dialog('/coordinator',[
-    function(session,args){
-        var cse = builder.EntityRecognizer.findEntity(args.entities,'department','cse');
-        var ece = builder.EntityRecognizer.findEntity(args.entities,'ece');
-        var mech = builder.EntityRecognizer.findEntity(args.entities,'mech');
-        var civil = builder.EntityRecognizer.findEntity(args.entities,'civil');
-        var it = builder.EntityRecognizer.findEntity(args.entities,'it');
-        var eee = builder.EntityRecognizer.findEntity(args.entities,'eee');
-        if(cse) session.endDialog("k sumanth");
-    }
-]);
+}]);
 intents.matches(/^i love you/i,[
     function(session){
         session.send("i love you to %s",session.userData.name);
     }
 ]);
-/*bot.dialog('/picture', [
+bot.dialog('/principalpicture', [
     function (session) {
-        session.send("You can easily send pictures to a user...");
+        session.send("Dasika surya narayana");
         var msg = new builder.Message(session)
             .attachments([{
                 contentType: "image/jpeg",
-                contentUrl: "http://www.theoldrobots.com/images62/Bender-18.JPG"
+                contentUrl: "http://www.vishnu.edu.in/upload/principal.jpg"
             }]);
         session.endDialog(msg);
     }
-]);*/
+]);
 intents.matches(/^what is your age/i,[function(session){
     session.send("im just born");
 }]);
